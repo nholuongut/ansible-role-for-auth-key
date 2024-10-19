@@ -1,0 +1,13 @@
+---
+- name: Remove old keys for regeneration
+  delegate_to: localhost
+  file:
+    path: "{{ item }}"
+    state: absent
+  run_once: true
+  with_items:
+    - "{{ _keypath }}"
+    - "{{ _keypath_pub }}"
+    - "{{ _keypath_pem }}"
+    - "{{ _keypath_ppk }}"
+  tags: ["always"]

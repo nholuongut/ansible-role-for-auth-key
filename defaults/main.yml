@@ -1,0 +1,8 @@
+---
+keys_base: "~/private/keys"
+
+keygen:
+  bits: 4096
+  encryption: rsa
+
+comment: ""

@@ -1,0 +1,41 @@
+---
+- name: Create "{{ _keypath_pub }}"
+  delegate_to: localhost
+  command: ssh-keygen -b {{ keygen.bits }} -t {{ keygen.encryption }} -f {{ _keypath }} -q -N '' -C '{{ comment }}'
+  run_once: true
+  tags: ["create"]
+  args:
+    creates: "{{ _keypath_pub }}"
+
+- name: Create "{{ _keypath_pem }}"
+  delegate_to: localhost
+  command: cp {{ _keypath }} {{ _keypath_pem }}
+  run_once: true
+  register: result_pem
+  tags: ["create"]
+  args:
+    creates: "{{ _keypath_pem }}"
+
+- name: Is putty installed?
+  command: which puttygen
+  register: result_putty
+  ignore_errors: yes
+  tags: ["create"]
+  delegate_to: localhost
+  run_once: true
+  when: true
+
+- name: Install putty
+  delegate_to: localhost
+  command: brew install putty
+  run_once: true
+  when: result_putty.failed is defined and result_putty.failed
+  tags: ["create"]
+
+- name: Create "{{ _keypath_ppk }}"
+  delegate_to: localhost
+  command: puttygen {{ _keypath }} -o {{ _keypath_ppk }}
+  run_once: true
+  tags: ["create"]
+  args:
+    creates: "{{ _keypath_ppk }}"
